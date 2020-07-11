@@ -43,7 +43,7 @@ if  [ "$1" = "R" ] || [ "$1" = "r" ]; then
      echo $currentRestoreDir
      echo "$2 "$2
 
-           iocage stop $2
+           iocage stop --force $2
            iocage destroy $2
            cp ${currentRestoreDir}/${2}* ${JAIL_IMAGE}
            iocage import $2
@@ -75,6 +75,29 @@ chmod 770 ${FULL_LOG_NAME}
 #echo "---------------------------"
 #echo "$(ls -l $BACKUP_DIR)"
 #echo "---------------------------"
+
+if  [ "$1" = "B" ] || [ "$1" = "b" ]; then
+if [ ! -z "${2}" ]; then
+   echo "$2 "${2}
+   echo "********************${dir}******************************" >> ${FULL_LOG_NAME}
+
+   JAIL_NAME=$dir
+   echo "---Starting Backup of FreeNAS "${2}" Jails---" >> ${FULL_LOG_NAME}
+   echo $(date) >> ${FULL_LOG_NAME}
+
+   #Jail #1 Backup
+   echo "Backing Up Jail" >> ${FULL_LOG_NAME}
+   echo $(date) >> ${FULL_LOG_NAME}
+   echo "Create file"${JAIL_DIR}"/images/"${JAIL_NAME}
+ # touch ${JAIL_IMAGE}/${JAIL_NAME}
+   iocage stop --force ${JAIL_NAME} >> ${FULL_LOG_NAME}
+   iocage export ${JAIL_NAME} >> ${FULL_LOG_NAME}
+   iocage start ${JAIL_NAME} >> ${FULL_LOG_NAME}
+
+   echo "...Moving current backup to storage folders" >> ${FULL_LOG_NAME}
+   echo $(date) >> ${FULL_LOG_NAME}
+   mv -v ${JAIL_IMAGE}/${JAIL_NAME}* ${BACKUP_DIR} >> ${FULL_LOG_NAME}
+else
 cd $JAIL_DIR
 shopt -s dotglob
 shopt -s nullglob
@@ -92,7 +115,7 @@ echo "Backing Up Jail" >> ${FULL_LOG_NAME}
 echo $(date) >> ${FULL_LOG_NAME}
 echo "Create file"${JAIL_DIR}"/images/"${JAIL_NAME}
 # touch ${JAIL_IMAGE}/${JAIL_NAME}
-iocage stop ${JAIL_NAME} >> ${FULL_LOG_NAME}
+iocage stop --force ${JAIL_NAME} >> ${FULL_LOG_NAME}
 iocage export ${JAIL_NAME} >> ${FULL_LOG_NAME}
 iocage start ${JAIL_NAME} >> ${FULL_LOG_NAME}
 
@@ -112,7 +135,10 @@ mv -v ${JAIL_IMAGE}/${JAIL_NAME}* ${BACKUP_DIR} >> ${FULL_LOG_NAME}
 done
 
 echo "There are ${#array[@]} jails backed up"
-#fi
+
+
+
+fi
 
 #
 # Delete old backups
