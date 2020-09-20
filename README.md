@@ -1,4 +1,4 @@
-# freenas-iocage-jail-backup
+# freenas-backup-jails
 Backup and Restore Iocage Jails
 Backup and restore iocage jails in FreeNAS 11.3
 Adapted from https://digimoot.wordpress.com/2020/01/11/freenas-backup-jails-automatically-using-iocage-import-and-export/
